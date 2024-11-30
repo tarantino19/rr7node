@@ -1,7 +1,7 @@
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
+import { isRouteErrorResponse, Link, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
 
 import type { Route } from './+types/root';
-import stylesheet from './app.css?url';
+import stylesheet from './tailwind.css?url';
 
 export const links: Route.LinksFunction = () => [
 	{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -18,6 +18,10 @@ export const links: Route.LinksFunction = () => [
 	{ rel: 'stylesheet', href: stylesheet },
 ];
 
+export function meta({}: Route.MetaArgs) {
+	return [{ title: 'RR7-Node' }, { name: 'description', content: 'RR7-Node' }];
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang='en'>
@@ -27,7 +31,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Meta />
 				<Links />
 			</head>
-			<body>
+			<body className='flex h-screen'>
 				{children}
 				<ScrollRestoration />
 				<Scripts />
@@ -37,7 +41,29 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-	return <Outlet />;
+	return (
+		<>
+			<nav className='bg-primary text-white'>
+				<ul className='flex flex-col'>
+					<li>
+						<Link to='/'>Home </Link>
+					</li>
+					<li>
+						<Link to='/discover'>Discover</Link>
+					</li>
+					<li>
+						<Link to='/app'>App</Link>
+					</li>
+					<li>
+						<Link to='/settings'>Settings</Link>
+					</li>
+				</ul>
+			</nav>
+			<div>
+				<Outlet />
+			</div>
+		</>
+	);
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

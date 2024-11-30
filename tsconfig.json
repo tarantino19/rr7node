@@ -1,15 +1,12 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.node.json" },
-    { "path": "./tsconfig.vite.json" }
-  ],
-  "compilerOptions": {
-    "checkJs": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true
-  }
+	"files": [],
+	"references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.vite.json" }],
+	"compilerOptions": {
+		"checkJs": true,
+		"forceConsistentCasingInFileNames": true,
+		"isolatedModules": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"noEmit": true
+	}
 }
