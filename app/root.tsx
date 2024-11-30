@@ -98,22 +98,32 @@ type AppNavLinkProps = {
 
 function AppNavLink({ children, to }: AppNavLinkProps) {
 	return (
-		<>
-			<li className='w-16 4rem'>
-				<NavLink to={to}>
-					{({ isActive, isPending }) => (
-						<div
-							className={`py-4 flex justify-center font-medium hover:bg-primary-light 
-								${isActive ? 'bg-primary-light' : 'bg-primary'}
-								${isPending ? 'animate-pulse bg-primary-light' : ''}
-							`}
-						>
-							{children}
-						</div>
-					)}
-				</NavLink>
-			</li>
-		</>
+		<li className='w-16'>
+			<NavLink to={to}>
+				{({ isActive, isPending }) => (
+					<div
+						className={`py-4 flex justify-center items-center relative font-medium hover:bg-primary-light
+							${isActive ? 'bg-primary-light' : 'bg-primary'}
+						`}
+					>
+						{isPending && (
+							<div className='absolute inset-0 flex items-center justify-center bg-primary-light/80 animate-pulse z-10'>
+								<svg
+									className='h-6 w-6 text-white animate-spin'
+									xmlns='http://www.w3.org/2000/svg'
+									fill='none'
+									viewBox='0 0 24 24'
+								>
+									<circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
+									<path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8v8z'></path>
+								</svg>
+							</div>
+						)}
+						<span className={`${isPending ? 'opacity-50' : 'opacity-100'}`}>{children}</span>
+					</div>
+				)}
+			</NavLink>
+		</li>
 	);
 }
 

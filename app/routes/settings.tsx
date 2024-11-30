@@ -1,4 +1,5 @@
 import { Link, LoaderFunction, Outlet, useLoaderData } from 'react-router';
+import { Suspense } from 'react';
 
 export async function loader() {
 	return new Response(JSON.stringify({ message: 'Welcome to React Router 7!' }), {
