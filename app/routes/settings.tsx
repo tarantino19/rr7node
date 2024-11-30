@@ -1,7 +1,10 @@
 import { Link, LoaderFunction, Outlet, useLoaderData } from 'react-router';
-export const loader: LoaderFunction = () => {
-	return { message: 'Hello World' };
-};
+
+export async function loader() {
+	return new Response(JSON.stringify({ message: 'Welcome to React Router 7!' }), {
+		headers: { 'Content-Type': 'application/json' },
+	});
+}
 
 export default function Settings() {
 	const data = useLoaderData();
