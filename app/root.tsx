@@ -7,6 +7,7 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	useMatches,
 	useNavigate,
 	useNavigation,
 	useResolvedPath,
@@ -45,7 +46,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Meta />
 				<Links />
 			</head>
-			<body className='md:flex h-screen '>
+			<body className='md:flex h-screen'>
 				{children}
 				<ScrollRestoration />
 				<Scripts />
@@ -115,28 +116,41 @@ function AppNavLink({ children, to }: AppNavLinkProps) {
 		</>
 	);
 }
+
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 	let message = 'Oops!';
 	let details = 'An unexpected error occurred.';
 	let stack: string | undefined;
 
 	if (isRouteErrorResponse(error)) {
-		message = error.status === 404 ? '404' : 'Error';
-		details = error.status === 404 ? 'The requested page could not be found.' : error.statusText || details;
+		message = error.status === 404 ? `I know this kinda sucks, but that page does not exist` : 'Error';
+		details = error.status === 404 ? '⬇️⬇️⬇️ Probly need to do this ⬇️⬇️⬇️' : error.statusText || details;
 	} else if (import.meta.env.DEV && error && error instanceof Error) {
 		details = error.message;
 		stack = error.stack;
 	}
 
 	return (
-		<main className='pt-16 p-4 container mx-auto'>
-			<h1>{message}</h1>
-			<p>{details}</p>
-			{stack && (
-				<pre className='w-full p-4 overflow-x-auto'>
-					<code>{stack}</code>
-				</pre>
-			)}
-		</main>
+		<div className='fixed inset-0 bg-primary-light flex items-center justify-center text-gray-900'>
+			<div className='w-full max-w-md bg-white shadow-lg rounded-lg p-6 text-center animate-fade-in'>
+				<h1 className='text-3xl font-bold text-primary mb-4 animate-bounce-in'>{message}</h1>
+				<p className='text-md text-gray-700 mb-6 animate-slide-up'>{details}</p>
+
+				{stack && (
+					<pre className='text-sm bg-gray-100 p-4 rounded overflow-x-auto text-left text-gray-800 animate-slide-up'>
+						<code>{stack}</code>
+					</pre>
+				)}
+
+				<div className='mt-6'>
+					<NavLink
+						to='/'
+						className='inline-block px-6 py-3 bg-primary text-white font-medium rounded-md shadow hover:bg-primary-light transition transform hover:scale-105 animate-pop-in'
+					>
+						Go back to the Home Page
+					</NavLink>
+				</div>
+			</div>
+		</div>
 	);
 }
