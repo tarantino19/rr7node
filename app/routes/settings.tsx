@@ -1,5 +1,11 @@
-import { Link, Outlet } from 'react-router';
+import { Link, LoaderFunction, Outlet, useLoaderData } from 'react-router';
+
+export const loader: LoaderFunction = () => {
+	return { message: 'Hello World' };
+};
 export default function Settings() {
+	const data = useLoaderData();
+
 	return (
 		<>
 			<div className=''>
@@ -9,6 +15,7 @@ export default function Settings() {
 					<Link to='app'>App</Link>
 					<Link to='profile'>Profile</Link>
 				</nav>
+				<div>Message from loader: {data.message}</div>
 				<Outlet />
 			</div>
 		</>

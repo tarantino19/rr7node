@@ -11,6 +11,7 @@
   "dependencies": {
     "@react-router/express": "^7.0.1",
     "@react-router/node": "^7.0.1",
+    "classnames": "^2.5.1",
     "compression": "^1.7.5",
     "express": "^4.21.1",
     "isbot": "^5.1.17",

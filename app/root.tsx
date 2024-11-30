@@ -1,7 +1,21 @@
-import { isRouteErrorResponse, Link, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
+import {
+	isRouteErrorResponse,
+	Link,
+	Links,
+	Meta,
+	NavLink,
+	Outlet,
+	Scripts,
+	ScrollRestoration,
+	useNavigate,
+	useNavigation,
+	useResolvedPath,
+} from 'react-router';
 
 import type { Route } from './+types/root';
 import stylesheet from './tailwind.css?url';
+import { DiscoverIcon, HomeIcon, RecipesIcon, SettingsIcon } from './components/icons';
+import path from 'path';
 
 export const links: Route.LinksFunction = () => [
 	{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -31,7 +45,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Meta />
 				<Links />
 			</head>
-			<body className='flex h-screen'>
+			<body className='md:flex h-screen '>
 				{children}
 				<ScrollRestoration />
 				<Scripts />
@@ -44,28 +58,63 @@ export default function App() {
 	return (
 		<>
 			<nav className='bg-primary text-white'>
-				<ul className='flex flex-col'>
+				<ul className='flex md:flex-col'>
 					<li>
-						<Link to='/'>Home </Link>
+						<AppNavLink to='/'>
+							<HomeIcon />
+						</AppNavLink>
 					</li>
 					<li>
-						<Link to='/discover'>Discover</Link>
+						<AppNavLink to='/discover'>
+							<DiscoverIcon />
+						</AppNavLink>
 					</li>
 					<li>
-						<Link to='/app'>App</Link>
+						<AppNavLink to='/app'>
+							<RecipesIcon />
+						</AppNavLink>
 					</li>
 					<li>
-						<Link to='/settings'>Settings</Link>
+						<AppNavLink to='/settings'>
+							<SettingsIcon />
+						</AppNavLink>
 					</li>
 				</ul>
 			</nav>
 			<div>
-				<Outlet />
+				<div className='p-4'>
+					<Outlet />
+				</div>
 			</div>
 		</>
 	);
 }
 
+type AppNavLinkProps = {
+	children: React.ReactNode;
+	to: string;
+};
+
+function AppNavLink({ children, to }: AppNavLinkProps) {
+	return (
+		<>
+			<li className='w-16 4rem'>
+				<NavLink to={to}>
+					{({ isActive, isPending }) => (
+						<div
+							className={`py-4 flex justify-center font-medium hover:bg-primary-light 
+								${isActive ? 'bg-primary-light' : 'bg-primary'}
+								${isPending ? 'animate-pulse bg-primary-light' : ''}
+							`}
+						>
+							{children}
+						</div>
+					)}
+				</NavLink>
+			</li>
+		</>
+	);
+}
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 	let message = 'Oops!';
 	let details = 'An unexpected error occurred.';
