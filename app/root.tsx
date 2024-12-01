@@ -1,22 +1,22 @@
 import {
 	isRouteErrorResponse,
-	Link,
 	Links,
 	Meta,
 	NavLink,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
-	useMatches,
-	useNavigate,
-	useNavigation,
-	useResolvedPath,
+	useRouteError,
 } from 'react-router';
 
 import type { Route } from './+types/root';
 import stylesheet from './tailwind.css?url';
 import { DiscoverIcon, HomeIcon, RecipeBookIcon, SettingsIcon } from './components/icons';
 import path from 'path';
+
+interface ErrorBoundaryProps {
+	children?: React.ReactNode;
+}
 
 export const links: Route.LinksFunction = () => [
 	{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -96,7 +96,7 @@ type AppNavLinkProps = {
 	to: string;
 };
 
-function AppNavLink({ children, to }: AppNavLinkProps) {
+export function AppNavLink({ children, to }: AppNavLinkProps) {
 	return (
 		<li className='w-16'>
 			<NavLink to={to}>
@@ -130,15 +130,20 @@ function AppNavLink({ children, to }: AppNavLinkProps) {
 	);
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-	let message = 'Oops!';
-	let details = 'An unexpected error occurred.';
+export function ErrorBoundary({ children }: ErrorBoundaryProps) {
+	const error = useRouteError();
+
+	// Initialize variables for error details
+	let message = 'An unexpected error occurred.';
+	let details = "Something went wrong, but we couldn't find more details.";
 	let stack: string | undefined;
 
+	// Handle RouteErrorResponse or standard Error
 	if (isRouteErrorResponse(error)) {
-		message = error.status === 404 ? `I know this kinda sucks, but that page does not exist` : 'Error';
-		details = error.status === 404 ? '⬇️⬇️⬇️ Probly need to do this ⬇️⬇️⬇️' : error.statusText || details;
+		message = error.status === 404 ? `I know this kinda sucks, but that page does not exist` : `Error ${error.status}`;
+		details = error.statusText || 'No additional details available.';
 	} else if (import.meta.env.DEV && error && error instanceof Error) {
+		message = 'An error occurred during rendering.';
 		details = error.message;
 		stack = error.stack;
 	}
@@ -150,9 +155,10 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 				<p className='text-md text-gray-700 mb-6 animate-slide-up'>{details}</p>
 
 				{stack && (
-					<pre className='text-sm bg-gray-100 p-4 rounded overflow-x-auto text-left text-gray-800 animate-slide-up'>
-						<code>{stack}</code>
-					</pre>
+					<pre className='bg-green-200 p-2 rounded text-green-900 text-left text-sm overflow-auto max-h-40'>{stack}</pre>
+				)}
+				{import.meta.env.DEV && (
+					<p className='text-xs text-green-600'>(You’re seeing this because the app is in development mode.)</p>
 				)}
 
 				<div className='mt-6'>
