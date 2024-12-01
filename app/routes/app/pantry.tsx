@@ -4,9 +4,16 @@ import { getAllShelves } from '~/models/pantry-shelf.server';
 import { getAllPantryItems } from '~/models/pantry-item.server';
 
 export const loader: LoaderFunction = async () => {
-	const shelves = await getAllShelves();
-	const items = await getAllPantryItems();
-	return new Response(JSON.stringify({ shelves, items }), { headers: { 'Content-Type': 'application/json' } });
+	try {
+		const [shelves, items] = await Promise.all([getAllShelves(), getAllPantryItems()]);
+
+		return new Response(JSON.stringify({ shelves, items }), {
+			headers: { 'Content-Type': 'application/json' },
+		});
+	} catch (error) {
+		console.error('Error loading shelves and items:', error);
+		throw new Response('Failed to load pantry data', { status: 500 });
+	}
 };
 
 export default function Pantry() {
