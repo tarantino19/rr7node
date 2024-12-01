@@ -15,7 +15,7 @@ import {
 
 import type { Route } from './+types/root';
 import stylesheet from './tailwind.css?url';
-import { DiscoverIcon, HomeIcon, RecipesIcon, SettingsIcon } from './components/icons';
+import { DiscoverIcon, HomeIcon, RecipeBookIcon, SettingsIcon } from './components/icons';
 import path from 'path';
 
 export const links: Route.LinksFunction = () => [
@@ -46,7 +46,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Meta />
 				<Links />
 			</head>
-			<body className='md:flex h-screen'>
+			<body className='md:flex md:h-screen'>
 				{children}
 				<ScrollRestoration />
 				<Scripts />
@@ -71,8 +71,8 @@ export default function App() {
 						</AppNavLink>
 					</li>
 					<li>
-						<AppNavLink to='/app'>
-							<RecipesIcon />
+						<AppNavLink to='/app/pantry'>
+							<RecipeBookIcon />
 						</AppNavLink>
 					</li>
 					<li>
@@ -106,10 +106,11 @@ function AppNavLink({ children, to }: AppNavLinkProps) {
 							${isActive ? 'bg-primary-light' : 'bg-primary'}
 						`}
 					>
+						{/* Spinner Overlay */}
 						{isPending && (
 							<div className='absolute inset-0 flex items-center justify-center bg-primary-light/80 animate-pulse z-10'>
 								<svg
-									className='h-6 w-6 text-white animate-spin'
+									className='h-7 w-7 text-white animate-spin'
 									xmlns='http://www.w3.org/2000/svg'
 									fill='none'
 									viewBox='0 0 24 24'
@@ -119,6 +120,8 @@ function AppNavLink({ children, to }: AppNavLinkProps) {
 								</svg>
 							</div>
 						)}
+
+						{/* Children Content */}
 						<span className={`${isPending ? 'opacity-50' : 'opacity-100'}`}>{children}</span>
 					</div>
 				)}

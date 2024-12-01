@@ -21,7 +21,7 @@ export default function Settings() {
 					settings pageThis is the settings pageThis is the settings page
 				</p>
 				<nav className='bg-yellow-300'>
-					<Link to='app'>App</Link>
+					<Link to='app2'>App</Link>
 					<Link to='profile'>Profile</Link>
 				</nav>
 				<div>Message from loader: {data?.message}</div>

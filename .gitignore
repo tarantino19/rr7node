@@ -5,3 +5,5 @@
 build
 node_modules
 *.tsbuildinfo
+postgres-data
+docker-compose.yml

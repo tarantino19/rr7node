@@ -2,6 +2,8 @@ import compression from 'compression';
 import express from 'express';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import { PrismaClient } from '@prisma/client';
+const db = new PrismaClient();
 
 dotenv.config();
 // Short-circuit the type-checking of the built output.
@@ -45,3 +47,13 @@ app.use(morgan('tiny'));
 app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+db
+	.$connect()
+	.then(() => {
+		console.log('DATABASE NAME: ', process.env.DBNICKAME);
+		console.log('Connected to the database successfully!');
+	})
+	.catch((error) => {
+		console.error('Database connection failed:', error);
+	});
