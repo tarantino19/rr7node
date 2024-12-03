@@ -132,6 +132,7 @@ export default function Pantry({ loaderData }: Route.ComponentProps) {
 	);
 }
 
+//sub-components
 type ShelfProps = {
 	shelf: {
 		id: string;
@@ -142,7 +143,8 @@ type ShelfProps = {
 		}[];
 	};
 };
-export function Shelf({ shelf }: ShelfProps) {
+
+function Shelf({ shelf }: ShelfProps) {
 	const deleteShelfFetcher = useFetcher();
 	const saveShelfNameFetcher = useFetcher();
 	const createShelfItemFetcher = useFetcher();
@@ -226,8 +228,8 @@ export function Shelf({ shelf }: ShelfProps) {
 				<input type='hidden' name='shelfId' value={shelf.id} />
 			</createShelfItemFetcher.Form>
 			<ul>
-				{shelf.items.map((item) => (
-					<ShelfItem key={item.id} shelfItem={item} />
+				{shelf.items.map((shelfItem) => (
+					<ShelfItem key={shelfItem.id} shelfItem={shelfItem} />
 				))}
 			</ul>
 			<deleteShelfFetcher.Form method='post' className='pt-8'>
@@ -275,4 +277,4 @@ function ShelfItem({ shelfItem }: ShelfItemProps) {
 	);
 }
 
-//why we're creating new component? because we cant use fetcher hooks inside mapping funcs
+//why we're creating new component? because we cant use fetcher hooks inside mapping/looping funcs
