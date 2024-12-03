@@ -1,25 +1,49 @@
 import { PrismaClient } from '@prisma/client';
 const db = new PrismaClient();
 
-function getShelves() {
+function createUser() {
+	return db.user.create({
+		data: {
+			email: '0V0oR@example.com',
+			firstName: 'John',
+			lastName: 'Doe',
+		},
+	});
+}
+
+function getShelves(userId: string) {
 	return [
 		{
+			userId,
 			name: 'Dairy',
 			items: {
-				create: [{ name: 'Cheese' }, { name: 'Milk' }, { name: 'Butter' }, { name: 'Eggs' }, { name: 'Yogurt' }],
+				create: [
+					{ userId, name: 'Cheese' },
+					{ userId, name: 'Milk' },
+					{ userId, name: 'Butter' },
+					{ userId, name: 'Eggs' },
+					{ userId, name: 'Yogurt' },
+				],
 			},
 		},
 		{
+			userId,
 			name: 'Fruits',
 			items: {
-				create: [{ name: 'Apples' }, { name: 'Oranges' }, { name: 'Mango' }, { name: 'Bananas' }],
+				create: [
+					{ userId, name: 'Apples' },
+					{ userId, name: 'Oranges' },
+					{ userId, name: 'Mango' },
+					{ userId, name: 'Bananas' },
+				],
 			},
 		},
 	];
 }
 
 async function seed() {
-	await Promise.all(getShelves().map((shelf) => db.pantryShelf.create({ data: shelf })));
+	const user = await createUser();
+	await Promise.all(getShelves(user.id).map((shelf) => db.pantryShelf.create({ data: shelf })));
 }
 
 seed();

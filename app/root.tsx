@@ -13,7 +13,7 @@ import {
 
 import type { Route } from './+types/root';
 import stylesheet from './tailwind.css?url';
-import { DiscoverIcon, HomeIcon, RecipeBookIcon, SettingsIcon } from './components/icons';
+import { DiscoverIcon, HomeIcon, LoginIcon, RecipeBookIcon, SettingsIcon } from './components/icons';
 
 interface ErrorBoundaryProps {
 	children?: React.ReactNode;
@@ -59,7 +59,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
 	return (
 		<>
-			<nav className='bg-primary text-white'>
+			<nav className='bg-primary text-white md:w-16 flex justify-between md:flex-col'>
 				<ul className='flex md:flex-col'>
 					<li>
 						<AppNavLink to='/'>
@@ -82,12 +82,14 @@ export default function App() {
 						</AppNavLink>
 					</li>
 				</ul>
+				<ul>
+					<AppNavLink to='/login'>
+						<LoginIcon />
+					</AppNavLink>
+				</ul>
 			</nav>
-			<div>
-				{/* md:w-[calc(100%-4rem)] */}
-				<div className='p-4 w-full'>
-					<Outlet />
-				</div>
+			<div className='p-4 w-full md:w-[calc(100%-4rem)]'>
+				<Outlet />
 			</div>
 		</>
 	);

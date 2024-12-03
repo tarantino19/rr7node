@@ -7,14 +7,6 @@ import { z } from 'zod';
 import { validateForm } from '~/utils/validation';
 import { createShelfItems, deleteShelfItem } from '~/models/pantry-item.server';
 
-//loaders
-export const loader = async ({ request }: Route.LoaderArgs) => {
-	const url = new URL(request.url);
-	const q = url.searchParams.get('q');
-	const shelves = await getAllShelves(q);
-	return { shelves };
-};
-
 //zod validations
 const saveShelfNameSchema = z.object({
 	shelfId: z.string(),
@@ -33,6 +25,14 @@ const createShelfItemSchema = z.object({
 const deleteShelfItemSchema = z.object({
 	itemId: z.string(),
 });
+
+//loaders
+export const loader = async ({ request }: Route.LoaderArgs) => {
+	const url = new URL(request.url);
+	const q = url.searchParams.get('q');
+	const shelves = await getAllShelves(q);
+	return { shelves };
+};
 
 //actions for form
 export const action = async ({ request }: Route.ActionArgs) => {
@@ -79,8 +79,8 @@ export const action = async ({ request }: Route.ActionArgs) => {
 		}
 	}
 };
-export default function Pantry() {
-	const { shelves } = useLoaderData<typeof loader>();
+export default function Pantry({ loaderData }: Route.ComponentProps) {
+	const { shelves } = loaderData;
 	const [searchParams, setSearchParams] = useSearchParams();
 	const navigation = useNavigation();
 	const createShelfFetcher = useFetcher();

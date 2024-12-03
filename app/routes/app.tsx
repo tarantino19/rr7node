@@ -15,7 +15,7 @@ export default function App() {
 						Pantry
 					</NavLink>
 				</nav>
-				{/* overflow-y-auto */}
+				{/* */}
 				<div className='py-4'>
 					<Outlet />
 				</div>
