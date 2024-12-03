@@ -4,7 +4,7 @@ export default function App() {
 	return (
 		<>
 			<div className='flex flex-col h-full'>
-				<h1 className='text-2xl font-bold my-2'>Recipe App</h1>
+				<h1 className='text-2xl font-bold my-2'>Easy Pantry</h1>
 				<nav className='pb-2 mt-2 text-1xl'>
 					<NavLink
 						to='pantry'
@@ -15,9 +15,10 @@ export default function App() {
 						Pantry
 					</NavLink>
 				</nav>
-			</div>
-			<div className='py-4'>
-				<Outlet />
+				{/* overflow-y-auto */}
+				<div className='py-4'>
+					<Outlet />
+				</div>
 			</div>
 		</>
 	);

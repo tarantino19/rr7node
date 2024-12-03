@@ -6,13 +6,14 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	useNavigation,
+	useResolvedPath,
 	useRouteError,
 } from 'react-router';
 
 import type { Route } from './+types/root';
 import stylesheet from './tailwind.css?url';
 import { DiscoverIcon, HomeIcon, RecipeBookIcon, SettingsIcon } from './components/icons';
-import path from 'path';
 
 interface ErrorBoundaryProps {
 	children?: React.ReactNode;
@@ -46,7 +47,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Meta />
 				<Links />
 			</head>
-			<body className='md:flex md:h-screen'>
+			<body className='md:flex md:h-screen bg-b	'>
 				{children}
 				<ScrollRestoration />
 				<Scripts />
@@ -83,7 +84,8 @@ export default function App() {
 				</ul>
 			</nav>
 			<div>
-				<div className='p-4'>
+				{/* md:w-[calc(100%-4rem)] */}
+				<div className='p-4 w-full'>
 					<Outlet />
 				</div>
 			</div>
@@ -97,6 +99,17 @@ type AppNavLinkProps = {
 };
 
 export function AppNavLink({ children, to }: AppNavLinkProps) {
+	const path = useResolvedPath(to);
+	const navigation = useNavigation();
+
+	// Check if form submissions are active for searching or creating
+	//these all came from the formData actions
+	const isCreatingShelf = navigation.formData?.has('createShelf');
+
+	// Determine if the link should show a loading spinner
+	const isLoading =
+		navigation.state === 'loading' && navigation.location?.pathname === path.pathname && !isCreatingShelf;
+
 	return (
 		<li className='w-16'>
 			<NavLink to={to}>
@@ -106,8 +119,7 @@ export function AppNavLink({ children, to }: AppNavLinkProps) {
 							${isActive ? 'bg-primary-light' : 'bg-primary'}
 						`}
 					>
-						{/* Spinner Overlay */}
-						{isPending && (
+						{isLoading && (
 							<div className='absolute inset-0 flex items-center justify-center bg-primary-light/80 animate-pulse z-10'>
 								<svg
 									className='h-7 w-7 text-white animate-spin'
@@ -122,7 +134,7 @@ export function AppNavLink({ children, to }: AppNavLinkProps) {
 						)}
 
 						{/* Children Content */}
-						<span className={`${isPending ? 'opacity-50' : 'opacity-100'}`}>{children}</span>
+						<span className={`${isLoading ? 'opacity-50' : 'opacity-100'}`}>{children}</span>
 					</div>
 				)}
 			</NavLink>
