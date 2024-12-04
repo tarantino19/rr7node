@@ -13,7 +13,6 @@ export function validateForm<T>(
 	const result = zodSchema.safeParse(Object.fromEntries(formData));
 
 	if (!result.success) {
-		``;
 		const errors: FieldErrors = {};
 		result.error.issues.forEach((issue) => {
 			const path = issue.path.join('.');

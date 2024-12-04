@@ -3,31 +3,42 @@ import type { Route } from './+types/login';
 import { z } from 'zod';
 import { validateForm } from '~/utils/validation';
 import { Form, useActionData } from 'react-router';
-
-export function headers() {
-	return {
-		'Set-Cookie': 'rr7cookie=myValue',
-	};
-}
+import { getUser } from '~/models/user.server';
+import { data } from 'react-router';
+import { sessionCookie } from '~/cookies';
+import { commitSession, getSession } from '~/sessions';
+import { generateMagicLink } from '~/magic-links.sever';
+import { v4 as uuid } from 'uuid';
 
 const loginSchema = z.object({
 	email: z.string().email('Please enter a valid email'),
 });
+
+export const loader = async ({ request }: Route.LoaderArgs) => {
+	const cookieHeader = request.headers.get('cookie');
+	const session = await getSession(cookieHeader);
+	console.log('sessionData', session.data);
+};
 export const action = async ({ request }: Route.ActionArgs) => {
+	const cookieHeader = request.headers.get('cookie');
+	const session = await getSession(cookieHeader);
 	const formData = await request.formData();
 
 	return validateForm(
 		formData,
 		loginSchema,
-		({ email }) => {
-			email;
+		async ({ email }) => {
+			const nonce = uuid();
+			const link = generateMagicLink(email, session.data.nonce);
+			console.log('magic link', link);
+			return data('ok okay');
 		},
 		(errors) => {
-			return { errors, email: formData.get('email'), status: 400 };
+			return data({ errors, email: formData.get('email') }, { status: 400 });
 		}
 	);
 };
-export default function Login() {
+export default function Login({ loaderData }: Route.ComponentProps) {
 	const actionData = useActionData();
 
 	return (

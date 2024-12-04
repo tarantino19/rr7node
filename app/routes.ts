@@ -4,6 +4,7 @@ export default [
 	index('routes/home.tsx'),
 
 	route('/login', 'routes/login.tsx'),
+	route('/validate-magic-link', 'routes/validate-magic-link.tsx'),
 
 	route('/discover', 'routes/discover.tsx'),
 	route('/app', 'routes/app.tsx', [route('pantry', 'routes/app/pantry.tsx')]),
