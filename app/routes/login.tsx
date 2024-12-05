@@ -1,4 +1,4 @@
-import { ErrorMessage, PrimaryButton } from '~/components/forms';
+import { ErrorMessage, PrimaryButton, PrimaryInput } from '~/components/forms';
 import type { Route } from './+types/login';
 import { z } from 'zod';
 import { validateForm } from '~/utils/validation';
@@ -29,7 +29,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 		loginSchema,
 		async ({ email }) => {
 			const nonce = uuid();
-			session.flash('nonce', nonce);
+			session.set('nonce', nonce);
 			const link = generateMagicLink(email, nonce);
 			console.log('magic link', link);
 			return new Response('okay', {
@@ -56,14 +56,7 @@ export default function Login({ loaderData }: Route.ComponentProps) {
 				<h1 className='text-3xl mb-8'>RR7 Recipes</h1>
 				<Form method='post' className='mx-auto md:w-1/3'>
 					<div className='pb-4'>
-						<input
-							type='email'
-							name='email'
-							defaultValue={actionData?.email}
-							placeholder='Email'
-							autoComplete='off'
-							className='w-4/5 mx-auto outline-none border-2 border-gray-200 focus:border-primary rounded-md p-2'
-						/>
+						<PrimaryInput type='email' name='email' defaultValue={actionData?.email} placeholder='Email' autoComplete='off' />
 						<ErrorMessage className='mt-2'>{actionData?.errors?.email}</ErrorMessage>
 					</div>
 					<PrimaryButton className='w-1/3 mx-auto flex items-center justify-center py-3 text-md'>Login</PrimaryButton>
