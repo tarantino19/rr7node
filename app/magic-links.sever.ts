@@ -27,6 +27,32 @@ export function generateMagicLink(email: string, nonce: string) {
 
 	const url = new URL(process.env.ORIGIN);
 	url.pathname = '/validate-magic-link';
-	url.searchParams.set('payload', encryptedPayload);
+	url.searchParams.set('magic', encryptedPayload);
 	return url.toString();
+}
+
+const isMagicLinkPayload = (payload: any): payload is MagicLinkPayload => {
+	return (
+		typeof payload === 'object' &&
+		typeof payload.email === 'string' &&
+		typeof payload.nonce === 'string' &&
+		typeof payload.createdAt === 'string'
+	);
+};
+
+export function getMagicLinkPayload(request: Request) {
+	const url = new URL(request.url);
+	const magic = url.searchParams.get('magic');
+
+	if (typeof magic !== 'string') {
+		throw new Error('Invalid magic link');
+	}
+
+	const magicLinkPayload = JSON.parse(cryptr.decrypt(magic));
+
+	if (!isMagicLinkPayload(magicLinkPayload)) {
+		throw new Error('Invalid magic link payload');
+	}
+
+	return magicLinkPayload;
 }

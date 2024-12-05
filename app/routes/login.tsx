@@ -29,12 +29,21 @@ export const action = async ({ request }: Route.ActionArgs) => {
 		loginSchema,
 		async ({ email }) => {
 			const nonce = uuid();
-			const link = generateMagicLink(email, session.data.nonce);
+			session.flash('nonce', nonce);
+			const link = generateMagicLink(email, nonce);
 			console.log('magic link', link);
-			return data('ok okay');
+			return new Response('okay', {
+				headers: {
+					'Set-Cookie': await commitSession(session),
+				},
+			});
 		},
 		(errors) => {
-			return data({ errors, email: formData.get('email') }, { status: 400 });
+			return new Response(JSON.stringify({ errors }), {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
 		}
 	);
 };
