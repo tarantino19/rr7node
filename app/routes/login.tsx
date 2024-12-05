@@ -7,7 +7,7 @@ import { getUser } from '~/models/user.server';
 import { data } from 'react-router';
 import { sessionCookie } from '~/cookies';
 import { commitSession, getSession } from '~/sessions';
-import { generateMagicLink } from '~/magic-links.sever';
+import { generateMagicLink, sendMagicLinkEmail } from '~/magic-links.sever';
 import { v4 as uuid } from 'uuid';
 
 const loginSchema = z.object({
@@ -31,7 +31,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 			const nonce = uuid();
 			session.set('nonce', nonce);
 			const link = generateMagicLink(email, nonce);
-			console.log('magic link', link);
+			await sendMagicLinkEmail(link, email);
 			return new Response('okay', {
 				headers: {
 					'Set-Cookie': await commitSession(session),
@@ -49,18 +49,34 @@ export const action = async ({ request }: Route.ActionArgs) => {
 };
 export default function Login({ loaderData }: Route.ComponentProps) {
 	const actionData = useActionData();
+	console.log('actionDataRed', actionData);
 
 	return (
 		<>
 			<div className='text-center mt-36'>
-				<h1 className='text-3xl mb-8'>RR7 Recipes</h1>
-				<Form method='post' className='mx-auto md:w-1/3'>
-					<div className='pb-4'>
-						<PrimaryInput type='email' name='email' defaultValue={actionData?.email} placeholder='Email' autoComplete='off' />
-						<ErrorMessage className='mt-2'>{actionData?.errors?.email}</ErrorMessage>
+				{actionData === 'okay' ? (
+					<div>
+						<h1 className='text-3xl py-8'>You're almost there!</h1>
+						<p>Check your email for a magic link to log in</p>
 					</div>
-					<PrimaryButton className='w-1/3 mx-auto flex items-center justify-center py-3 text-md'>Login</PrimaryButton>
-				</Form>
+				) : (
+					<div>
+						<h1 className='text-3xl mb-8'>RR7 Recipes</h1>
+						<Form method='post' className='mx-auto md:w-1/3'>
+							<div className='pb-4'>
+								<PrimaryInput
+									type='email'
+									name='email'
+									defaultValue={actionData?.email}
+									placeholder='Email'
+									autoComplete='off'
+								/>
+								<ErrorMessage className='mt-2'>{actionData?.errors?.email}</ErrorMessage>
+							</div>
+							<PrimaryButton className='w-1/3 mx-auto flex items-center justify-center py-3 text-md'>Login</PrimaryButton>
+						</Form>
+					</div>
+				)}
 			</div>
 		</>
 	);
