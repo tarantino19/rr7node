@@ -13,3 +13,7 @@ export async function createUser(email: string, firstName: string, lastName: str
 		},
 	});
 }
+
+export async function getUserById(id: string) {
+	return db.user.findUnique({ where: { id } });
+}

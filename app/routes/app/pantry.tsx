@@ -1,4 +1,4 @@
-import { useFetcher, Form, useLoaderData, useNavigation, useSearchParams, LoaderFunction } from 'react-router';
+import { useFetcher, Form, useNavigation, useSearchParams } from 'react-router';
 import { createShelf, deleteShelf, getAllShelves, saveShelfName } from '~/models/pantry-shelf.server';
 import { PlusIcon, SaveIcon, SearchIcon, TrashIcon } from '~/components/icons';
 import type { Route } from './+types/pantry';

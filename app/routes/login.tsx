@@ -3,23 +3,22 @@ import type { Route } from './+types/login';
 import { z } from 'zod';
 import { validateForm } from '~/utils/validation';
 import { Form, useActionData } from 'react-router';
-import { getUser } from '~/models/user.server';
-import { data } from 'react-router';
-import { sessionCookie } from '~/cookies';
 import { commitSession, getSession } from '~/sessions';
 import { generateMagicLink, sendMagicLinkEmail } from '~/magic-links.sever';
 import { v4 as uuid } from 'uuid';
+import { isAlreadyLoggedIn } from '~/utils/auth.server';
 
 const loginSchema = z.object({
 	email: z.string().email('Please enter a valid email'),
 });
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
-	const cookieHeader = request.headers.get('cookie');
-	const session = await getSession(cookieHeader);
-	console.log('sessionData', session.data);
+	await isAlreadyLoggedIn(request);
+	return null;
 };
 export const action = async ({ request }: Route.ActionArgs) => {
+	await isAlreadyLoggedIn(request);
+
 	const cookieHeader = request.headers.get('cookie');
 	const session = await getSession(cookieHeader);
 	const formData = await request.formData();

@@ -8,4 +8,5 @@ export const sessionCookie = createCookie('rr7-session', {
 	secrets: [process.env.AUTH_COOKIE_SECRET],
 	httpOnly: true,
 	secure: true,
+	maxAge: 60 * 60 * 24 * 7, //7 Days
 });
