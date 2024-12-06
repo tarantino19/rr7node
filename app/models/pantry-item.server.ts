@@ -1,9 +1,10 @@
 import { Prisma } from '@prisma/client';
 import db from '~/db.server';
 
-export async function createShelfItems(shelfId: string, name: string) {
+export async function createShelfItems(userId: string, shelfId: string, name: string) {
 	return await db.pantryItem.create({
 		data: {
+			userId,
 			shelfId,
 			name,
 		},
@@ -26,4 +27,12 @@ export async function deleteShelfItem(id: string) {
 		}
 		throw new Error('Failed to delete shelf');
 	}
+}
+
+export function getShelfItem(id: string) {
+	return db.pantryItem.findUnique({
+		where: {
+			id: id,
+		},
+	});
 }

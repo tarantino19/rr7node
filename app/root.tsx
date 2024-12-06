@@ -6,6 +6,7 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	useLoaderData,
 	useNavigation,
 	useResolvedPath,
 	useRouteError,
@@ -13,7 +14,8 @@ import {
 
 import type { Route } from './+types/root';
 import stylesheet from './tailwind.css?url';
-import { DiscoverIcon, HomeIcon, LoginIcon, RecipeBookIcon, SettingsIcon } from './components/icons';
+import { DiscoverIcon, HomeIcon, LoginIcon, LogoutIcon, RecipeBookIcon, SettingsIcon } from './components/icons';
+import { getCurrentUser } from './utils/auth.server';
 
 interface ErrorBoundaryProps {
 	children?: React.ReactNode;
@@ -56,7 +58,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 	);
 }
 
+export const loader = async ({ request }: Route.LoaderArgs) => {
+	const user = await getCurrentUser(request);
+	const isLoggedIn = user !== null;
+
+	return { isLoggedIn };
+};
+
 export default function App() {
+	const data = useLoaderData();
 	return (
 		<>
 			<nav className='bg-primary text-white md:w-16 flex justify-between md:flex-col'>
@@ -71,11 +81,13 @@ export default function App() {
 							<DiscoverIcon />
 						</AppNavLink>
 					</li>
-					<li>
-						<AppNavLink to='/app/pantry'>
-							<RecipeBookIcon />
-						</AppNavLink>
-					</li>
+					{data.isLoggedIn ? (
+						<li>
+							<AppNavLink to='/app/pantry'>
+								<RecipeBookIcon />
+							</AppNavLink>
+						</li>
+					) : null}
 					<li>
 						<AppNavLink to='/settings'>
 							<SettingsIcon />
@@ -83,9 +95,15 @@ export default function App() {
 					</li>
 				</ul>
 				<ul>
-					<AppNavLink to='/login'>
-						<LoginIcon />
-					</AppNavLink>
+					{data.isLoggedIn ? (
+						<AppNavLink to='/logout'>
+							<LogoutIcon />
+						</AppNavLink>
+					) : (
+						<AppNavLink to='/login'>
+							<LoginIcon />
+						</AppNavLink>
+					)}
 				</ul>
 			</nav>
 			<div className='p-4 w-full md:w-[calc(100%-4rem)]'>

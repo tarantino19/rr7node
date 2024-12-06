@@ -15,10 +15,20 @@ export async function getCurrentUser(request: Request) {
 	return userId;
 }
 
-export async function isAlreadyLoggedIn(request: Request) {
+export async function requiredLoggedOutUser(request: Request) {
 	const user = await getCurrentUser(request);
 
 	if (user !== null) {
 		throw redirect('/app/pantry');
 	}
+}
+
+export async function requiredLoggedInUser(request: Request) {
+	const user = await getCurrentUser(request);
+
+	if (user === null) {
+		throw redirect('/login');
+	}
+
+	return user;
 }

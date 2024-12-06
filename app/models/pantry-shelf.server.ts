@@ -1,10 +1,11 @@
 import { Prisma } from '@prisma/client';
 import db from '~/db.server';
 
-export async function getAllShelves(query: string | null) {
+export async function getAllShelves(userId: string, query: string | null) {
 	try {
 		const shelves = await db.pantryShelf.findMany({
 			where: {
+				userId,
 				name: {
 					contains: query ?? '',
 					mode: 'insensitive',
@@ -28,10 +29,11 @@ export async function getAllShelves(query: string | null) {
 	}
 }
 
-export async function createShelf() {
+export async function createShelf(userId: string) {
 	try {
 		const newShelf = await db.pantryShelf.create({
 			data: {
+				userId,
 				name: 'New Shelf',
 			},
 		});
@@ -78,5 +80,23 @@ export const saveShelfName = async (shelfId: string, shelfName: string) => {
 			}
 		}
 		throw new Error('Failed to save shelf name');
+	}
+};
+
+export const getShelf = async (shelfId: string) => {
+	try {
+		const shelf = await db.pantryShelf.findUnique({
+			where: {
+				id: shelfId,
+			},
+		});
+		return shelf;
+	} catch (error) {
+		if (error instanceof Prisma.PrismaClientKnownRequestError) {
+			if (error.code === 'P2025') {
+				throw new Error('Shelf not found');
+			}
+		}
+		throw new Error('Failed to get shelf');
 	}
 };

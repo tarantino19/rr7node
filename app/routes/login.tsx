@@ -6,18 +6,18 @@ import { Form, useActionData } from 'react-router';
 import { commitSession, getSession } from '~/sessions';
 import { generateMagicLink, sendMagicLinkEmail } from '~/magic-links.sever';
 import { v4 as uuid } from 'uuid';
-import { isAlreadyLoggedIn } from '~/utils/auth.server';
+import { requiredLoggedOutUser } from '~/utils/auth.server';
 
 const loginSchema = z.object({
 	email: z.string().email('Please enter a valid email'),
 });
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
-	await isAlreadyLoggedIn(request);
+	await requiredLoggedOutUser(request);
 	return null;
 };
 export const action = async ({ request }: Route.ActionArgs) => {
-	await isAlreadyLoggedIn(request);
+	await requiredLoggedOutUser(request);
 
 	const cookieHeader = request.headers.get('cookie');
 	const session = await getSession(cookieHeader);

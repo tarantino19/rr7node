@@ -1,11 +1,22 @@
-import { useFetcher, Form, useNavigation, useSearchParams } from 'react-router';
-import { createShelf, deleteShelf, getAllShelves, saveShelfName } from '~/models/pantry-shelf.server';
+import {
+	useFetcher,
+	Form,
+	useNavigation,
+	useSearchParams,
+	data,
+	isRouteErrorResponse,
+	NavLink,
+	useRouteError,
+} from 'react-router';
+import { createShelf, deleteShelf, getAllShelves, getShelf, saveShelfName } from '~/models/pantry-shelf.server';
 import { PlusIcon, SaveIcon, SearchIcon, TrashIcon } from '~/components/icons';
 import type { Route } from './+types/pantry';
 import { DeleteButton, ErrorMessage, PrimaryButton } from '~/components/forms';
 import { z } from 'zod';
 import { validateForm } from '~/utils/validation';
-import { createShelfItems, deleteShelfItem } from '~/models/pantry-item.server';
+import { createShelfItems, deleteShelfItem, getShelfItem } from '~/models/pantry-item.server';
+import { requiredLoggedInUser } from '~/utils/auth.server';
+import React from 'react';
 
 //zod validations
 const saveShelfNameSchema = z.object({
@@ -28,25 +39,34 @@ const deleteShelfItemSchema = z.object({
 
 //loaders
 export const loader = async ({ request }: Route.LoaderArgs) => {
+	const user = await requiredLoggedInUser(request);
 	const url = new URL(request.url);
 	const q = url.searchParams.get('q');
-	const shelves = await getAllShelves(q);
+	const shelves = await getAllShelves(user.id, q);
 	return { shelves };
 };
 
 //actions for form
 export const action = async ({ request }: Route.ActionArgs) => {
+	const user = await requiredLoggedInUser(request);
 	const formData = await request.formData();
 
 	switch (formData.get('_action')) {
 		case 'createShelf': {
-			return createShelf();
+			return createShelf(user.id);
 		}
 		case 'deleteShelf': {
 			return validateForm(
 				formData,
 				deleteShelfSchema,
-				(data) => deleteShelf(data.shelfId),
+				async (data) => {
+					const shelf = await getShelf(data.shelfId);
+
+					if (shelf !== null && shelf.userId !== user.id) {
+						return { errors: { message: 'You are not allowed to delete this shelf' }, status: 401 };
+					}
+					return deleteShelf(data.shelfId);
+				},
 				(errors) => ({ errors, status: 400 })
 			);
 		}
@@ -54,7 +74,14 @@ export const action = async ({ request }: Route.ActionArgs) => {
 			return validateForm(
 				formData,
 				saveShelfNameSchema,
-				(data) => saveShelfName(data.shelfId, data.shelfName),
+				async (data) => {
+					const shelf = await getShelf(data.shelfId);
+
+					if (shelf !== null && shelf.userId !== user.id) {
+						return { errors: { shelfId: 'You are not allowed to delete this shelf' }, status: 400 };
+					}
+					return saveShelfName(data.shelfId, data.shelfName);
+				},
 				(errors) => ({ errors, status: 400 })
 			);
 		}
@@ -62,7 +89,9 @@ export const action = async ({ request }: Route.ActionArgs) => {
 			return validateForm(
 				formData,
 				createShelfItemSchema,
-				(data) => createShelfItems(data.shelfId, data.itemName),
+				(data) => {
+					createShelfItems(user.id, data.shelfId, data.itemName);
+				},
 				(errors) => ({ errors, status: 400 })
 			);
 		}
@@ -70,7 +99,14 @@ export const action = async ({ request }: Route.ActionArgs) => {
 			return validateForm(
 				formData,
 				deleteShelfItemSchema,
-				(data) => deleteShelfItem(data.itemId),
+				async (data) => {
+					const item = await getShelfItem(data.itemId);
+
+					if (item !== null && item.userId !== user.id) {
+						return { errors: { message: `This item ain't yours man, you are not allowed to delete this item` }, status: 401 };
+					}
+					return deleteShelfItem(data.itemId);
+				},
 				(errors) => ({ errors, status: 400 })
 			);
 		}
@@ -278,3 +314,46 @@ function ShelfItem({ shelfItem }: ShelfItemProps) {
 }
 
 //why we're creating new component? because we cant use fetcher hooks inside mapping/looping funcs
+
+interface ErrorBoundaryProps {
+	children?: React.ReactNode;
+}
+
+export function ErrorBoundary({ children }: ErrorBoundaryProps) {
+	const error = useRouteError();
+
+	// Initialize variables for error details
+	let message = 'An unexpected error occurred.';
+	let details = "Something went wrong, but we couldn't find more details.";
+	let stack: string | undefined;
+
+	// Handle RouteErrorResponse or standard Error
+	if (isRouteErrorResponse(error)) {
+		message = error.status ? `You cant' delete this shelf ` : `Error ${error.status}`;
+	}
+
+	return (
+		<div className='fixed inset-0 bg-primary-light flex items-center justify-center text-gray-900'>
+			<div className='w-full max-w-md bg-white shadow-lg rounded-lg p-6 text-center animate-fade-in'>
+				<h1 className='text-3xl font-bold text-primary mb-4 animate-bounce-in'>{message}</h1>
+				<p className='text-md text-gray-700 mb-6 animate-slide-up'>{details}</p>
+
+				{stack && (
+					<pre className='bg-green-200 p-2 rounded text-green-900 text-left text-sm overflow-auto max-h-40'>{stack}</pre>
+				)}
+				{import.meta.env.DEV && (
+					<p className='text-xs text-green-600'>(You’re seeing this because the app is in development mode.)</p>
+				)}
+
+				<div className='mt-6'>
+					<NavLink
+						to='/'
+						className='inline-block px-6 py-3 bg-primary text-white font-medium rounded-md shadow hover:bg-primary-light transition transform hover:scale-105 animate-pop-in'
+					>
+						Go back to the Home Page
+					</NavLink>
+				</div>
+			</div>
+		</div>
+	);
+}
