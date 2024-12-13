@@ -83,7 +83,7 @@ export default function App() {
 					</li>
 					{data.isLoggedIn ? (
 						<li>
-							<AppNavLink to='/app/pantry'>
+							<AppNavLink to='/app/recipes'>
 								<RecipeBookIcon />
 							</AppNavLink>
 						</li>

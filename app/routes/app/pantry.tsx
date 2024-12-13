@@ -11,7 +11,7 @@ import {
 import { createShelf, deleteShelf, getAllShelves, getShelf, saveShelfName } from '~/models/pantry-shelf.server';
 import { PlusIcon, SaveIcon, SearchIcon, TrashIcon } from '~/components/icons';
 import type { Route } from './+types/pantry';
-import { DeleteButton, ErrorMessage, PrimaryButton } from '~/components/forms';
+import { DeleteButton, ErrorMessage, PrimaryButton, SearchBar } from '~/components/forms';
 import { z } from 'zod';
 import { validateForm } from '~/utils/validation';
 import { createShelfItems, deleteShelfItem, getShelfItem } from '~/models/pantry-item.server';
@@ -117,35 +117,13 @@ export const action = async ({ request }: Route.ActionArgs) => {
 };
 export default function Pantry({ loaderData }: Route.ComponentProps) {
 	const { shelves } = loaderData;
-	const [searchParams, setSearchParams] = useSearchParams();
-	const navigation = useNavigation();
 	const createShelfFetcher = useFetcher();
-	const isSearching = navigation.formData?.has('q');
 	const isCreatingShelf = createShelfFetcher.formData?.get('_action') === 'createShelf';
 
 	return (
 		<>
 			<div>
-				<Form className='flex border-2 border-gray-300 rounded-md focus-within:border-primary md:w-96'>
-					<button className='px-2 relative'>
-						{isSearching && (
-							<div className='absolute inset-0 bg-white/70 flex items-center justify-center animate-spin rounded-full'>
-								<svg className='h-5 w-5 text-gray-500' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'>
-									<circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
-									<path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8v8z'></path>
-								</svg>
-							</div>
-						)}
-						<SearchIcon />
-					</button>
-					<input
-						defaultValue={searchParams.get('q') ?? ''}
-						className='w-full py-3 px-2 outline-none'
-						type='text'
-						name='q'
-						placeholder='Search shelves...'
-					/>
-				</Form>
+				<SearchBar placeholder='Search' />
 				<createShelfFetcher.Form method='post'>
 					<PrimaryButton
 						disabled={isCreatingShelf}
