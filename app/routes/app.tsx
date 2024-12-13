@@ -9,7 +9,7 @@ export default function App() {
 					<NavLink
 						to='recipes'
 						className={({ isActive }) =>
-							`hover:text-gray-500 border-b-4 px-2 md:px-2 pb-2.5 ${isActive ? 'border-b-primary' : 'border-b-transparent'}`
+							`hover:text-gray-500 border-b-4 px-2 md:px-2 pb-2 ${isActive ? 'border-b-primary' : 'border-b-transparent'}`
 						}
 					>
 						Recipes
@@ -17,14 +17,15 @@ export default function App() {
 					<NavLink
 						to='pantry'
 						className={({ isActive }) =>
-							`hover:text-gray-500 border-b-4 px-2 md:px-2 pb-2.5 ${isActive ? 'border-b-primary' : 'border-b-transparent'}`
+							`hover:text-gray-500 border-b-4 px-2 md:px-2 pb-2 ${isActive ? 'border-b-primary' : 'border-b-transparent'}`
 						}
 					>
 						Pantry
 					</NavLink>
 				</nav>
 				{/* */}
-				<div className='py-6'>
+				<div className=''>
+					<div className='border-t border-gray-300 mb-6'></div>
 					<Outlet />
 				</div>
 			</div>

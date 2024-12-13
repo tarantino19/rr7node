@@ -8,10 +8,11 @@ export default [
 	route('/validate-magic-link', 'routes/validate-magic-link.tsx'),
 
 	route('/discover', 'routes/discover.tsx'),
+
 	route('/app', 'routes/app.tsx', [
-		index('routes/app/index.tsx'), // Define the default page for /app
+		index('routes/app/index.tsx'),
 		route('pantry', 'routes/app/pantry.tsx'),
-		route('recipes', 'routes/app/recipes.tsx'),
+		route('recipes', 'routes/app/recipes.tsx', [route(':recipeId', 'routes/app/recipes/recipeId.tsx')]),
 	]),
 
 	route('/settings', 'routes/settings.tsx', [
