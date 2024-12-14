@@ -11,7 +11,7 @@ import {
 import { createShelf, deleteShelf, getAllShelves, getShelf, saveShelfName } from '~/models/pantry-shelf.server';
 import { PlusIcon, SaveIcon, SearchIcon, TrashIcon } from '~/components/icons';
 import type { Route } from './+types/pantry';
-import { DeleteButton, ErrorMessage, PrimaryButton, SearchBar } from '~/components/forms';
+import { DeleteButton, ErrorMessage, Input, PrimaryButton, SearchBar } from '~/components/forms';
 import { z } from 'zod';
 import { validateForm } from '~/utils/validation';
 import { createShelfItems, deleteShelfItem, getShelfItem } from '~/models/pantry-item.server';
@@ -172,13 +172,14 @@ function Shelf({ shelf }: ShelfProps) {
 		>
 			<saveShelfNameFetcher.Form method='post' className='flex'>
 				<div className='w-full mb-2'>
-					<input
+					<Input
 						required
 						type='text'
 						defaultValue={shelf.name}
 						name='shelfName'
 						placeholder='Shelf Name'
 						autoComplete='off'
+						error={saveShelfNameFetcher.data?.errors?.shelfName}
 						onChange={(e) => {
 							e.target.value !== '' &&
 								saveShelfNameFetcher.submit(
@@ -192,9 +193,7 @@ function Shelf({ shelf }: ShelfProps) {
 									}
 								);
 						}}
-						className={`pt-2 pb-2 text-2xl font-extrabold w-full outline-none border-b-2 mb-1 focus:border-primary ${
-							saveShelfNameFetcher.data?.errors?.shelfName ? 'border-b-red-500' : ''
-						}`}
+						className={`pt-2 pb-2 text-2xl font-extrabold`}
 					/>
 					<ErrorMessage>{saveShelfNameFetcher.data?.errors?.shelfName}</ErrorMessage>
 				</div>

@@ -2,7 +2,7 @@ import { requiredLoggedInUser } from '~/utils/auth.server';
 import { Route } from './+types/recipes';
 import db from '~/db.server';
 import { RecipeCard, RecipeDetailWrapper, RecipeListWrapper, RecipePageWrapper } from '~/components/recipes';
-import { Form, NavLink, Outlet, redirect, useLocation, useNavigation } from 'react-router';
+import { data, Form, NavLink, Outlet, redirect, useLocation, useNavigation } from 'react-router';
 import { PrimaryButton, SearchBar } from '~/components/forms';
 import { PlusIcon } from '~/components/icons';
 
@@ -75,7 +75,10 @@ export default function recipes({ loaderData }: Route.ComponentProps) {
 
 						return (
 							<li className='my-4' key={recipe.id}>
-								<NavLink to={{ pathname: recipe.id, search: location.search }}>
+								<NavLink
+									to={{ pathname: recipe.id, search: location.search }}
+									// prefetch='viewport'
+								>
 									{({ isActive }) => (
 										<RecipeCard
 											name={recipe.name}

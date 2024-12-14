@@ -83,3 +83,18 @@ export function SearchBar({ placeholder }: SearchBarProps) {
 		</>
 	);
 }
+
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+	error?: string;
+}
+
+export function Input({ error, className, ...props }: InputProps) {
+	return (
+		<input
+			{...props}
+			className={`w-full outline-none focus:border-b-2 mb-1 focus:border-primary ${className || ''} ${
+				error ? 'border-b-red-500' : ''
+			}`}
+		/>
+	);
+}

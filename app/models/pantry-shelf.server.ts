@@ -19,7 +19,7 @@ export async function getAllShelves(userId: string, query: string | null) {
 				},
 			},
 			orderBy: {
-				createdAt: 'desc',
+				updatedAt: 'desc',
 			},
 		});
 		return shelves;
