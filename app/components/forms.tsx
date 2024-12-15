@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, HTMLAttributes, InputHTMLAttributes } from 'react';
+import { useEffect, useState, type ButtonHTMLAttributes, type HTMLAttributes, type InputHTMLAttributes } from 'react';
 import { Form, useSearchParams, useNavigation } from 'react-router';
 import { SearchIcon } from './icons';
 
@@ -57,30 +57,47 @@ export function SearchBar({ placeholder }: SearchBarProps) {
 	const navigation = useNavigation();
 	const isSearching = navigation.formData?.has('q');
 	const [searchParams, setSearchParams] = useSearchParams();
+	const [inputValue, setInputValue] = useState(searchParams.get('q') ?? '');
+	const [debouncedValue, setDebouncedValue] = useState(inputValue);
+
+	useEffect(() => {
+		const handler = setTimeout(() => {
+			setDebouncedValue(inputValue);
+		}, 250);
+
+		return () => {
+			clearTimeout(handler);
+		};
+	}, [inputValue]);
+
+	useEffect(() => {
+		if (debouncedValue !== searchParams.get('q')) {
+			setSearchParams({ q: debouncedValue });
+		}
+	}, [debouncedValue, setSearchParams, searchParams]);
 
 	return (
-		<>
-			<Form className='flex border-2 border-gray-300 rounded-md focus-within:border-primary md:w-96'>
-				<button className='px-2 relative'>
-					{isSearching && (
-						<div className='absolute inset-0 bg-white/70 flex items-center justify-center animate-spin rounded-full'>
-							<svg className='h-5 w-5 text-gray-500' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'>
-								<circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
-								<path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8v8z'></path>
-							</svg>
-						</div>
-					)}
-					<SearchIcon />
-				</button>
-				<input
-					defaultValue={searchParams.get('q') ?? ''}
-					className='w-full py-3 px-2 outline-none rounded-md'
-					type='text'
-					name='q'
-					placeholder={placeholder}
-				/>
-			</Form>
-		</>
+		<Form className='flex border-2 border-gray-300 rounded-md focus-within:border-primary md:w-96'>
+			<button className='px-2 relative'>
+				{isSearching && (
+					<div className='absolute inset-0 bg-white/70 flex items-center justify-center animate-spin rounded-full'>
+						<svg className='h-5 w-5 text-gray-500' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'>
+							<circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4'></circle>
+							<path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8v8z'></path>
+						</svg>
+					</div>
+				)}
+				<SearchIcon />
+			</button>
+			<input
+				value={inputValue}
+				onChange={(e) => setInputValue(e.target.value)}
+				className='w-full py-3 px-2 outline-none rounded-md'
+				type='text'
+				name='q'
+				placeholder={placeholder}
+			/>
+		</Form>
 	);
 }
 
