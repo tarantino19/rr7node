@@ -64,7 +64,7 @@ export function RecipeCard({ name, totalTime, imageUrl, isActive, isLoading }: R
 	return (
 		<div
 			className={`group flex shadow-md rounded-md border-2 max-w-md w-full ${
-				isActive ? 'border-primary text-primary' : 'border-white'
+				isActive ? 'border-primary text-primary-dark' : 'border-white'
 			} ${isLoading ? 'border-gray-500 text-gray-500' : ''} hover:text-primary hover:border-primary`}
 		>
 			<div className='w-14 h-14 rounded-full overflow-hidden my-4 ml-3 shrink-0'>

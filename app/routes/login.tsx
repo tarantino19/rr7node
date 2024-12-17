@@ -60,7 +60,7 @@ export default function Login({ loaderData }: Route.ComponentProps) {
 					</div>
 				) : (
 					<div>
-						<h1 className='text-3xl mb-8'>RR7 Recipes</h1>
+						<h1 className='text-3xl mb-8 text-primary-dark'>RR7 Recipes</h1>
 						<Form method='post' className='mx-auto md:w-1/3'>
 							<div className='pb-4'>
 								<PrimaryInput
