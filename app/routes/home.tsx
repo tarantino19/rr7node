@@ -7,7 +7,7 @@ export function loader({ context }: Route.LoaderArgs) {
 export default function Home({ loaderData }: Route.ComponentProps) {
 	return (
 		<>
-			<div className='bg-red-400'>
+			<div className='bg-primary'>
 				<h1>Home</h1>
 				<p>This is the home page</p>
 			</div>
