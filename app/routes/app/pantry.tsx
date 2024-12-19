@@ -16,7 +16,7 @@ import { z } from 'zod';
 import { validateForm } from '~/utils/validation';
 import { createShelfItems, deleteShelfItem, getShelfItem } from '~/models/pantry-item.server';
 import { requiredLoggedInUser } from '~/utils/auth.server';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 //zod validations
 const saveShelfNameSchema = z.object({
@@ -164,6 +164,15 @@ function Shelf({ shelf }: ShelfProps) {
 	const createShelfItemFetcher = useFetcher();
 	const isDeletingShelf = deleteShelfFetcher.formData?.get('_action') === 'deleteShelf';
 
+	const formRef = useRef<HTMLFormElement>(null);
+
+	// Reset the form when the fetcher state transitions back to idle
+	useEffect(() => {
+		if (createShelfItemFetcher.state === 'idle' && formRef.current) {
+			formRef.current.reset();
+		}
+	}, [createShelfItemFetcher.state]);
+
 	return isDeletingShelf ? null : (
 		<li
 			className='border-2 border-primary rounded-md p-4 w-[calc(100vw-2rem)] flex-none snap-center h-fit
@@ -221,7 +230,11 @@ function Shelf({ shelf }: ShelfProps) {
 				<input type='hidden' name='shelfId' value={shelf.id} />
 			</saveShelfNameFetcher.Form>
 			{/* SHELF ITEMS */}
-			<createShelfItemFetcher.Form method='post' className='flex py-2'>
+			<createShelfItemFetcher.Form
+				method='post'
+				ref={formRef} // Attach the form ref
+				className='flex py-2'
+			>
 				<div className='w-full mb-2'>
 					<input
 						required
@@ -240,6 +253,7 @@ function Shelf({ shelf }: ShelfProps) {
 				</button>
 				<input type='hidden' name='shelfId' value={shelf.id} />
 			</createShelfItemFetcher.Form>
+
 			<ul>
 				{shelf.items.map((shelfItem) => (
 					<ShelfItem key={shelfItem.id} shelfItem={shelfItem} />
