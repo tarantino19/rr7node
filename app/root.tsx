@@ -71,28 +71,21 @@ export default function App() {
 		<>
 			<nav className='bg-primary text-white md:w-16 flex justify-between md:flex-col'>
 				<ul className='flex md:flex-col'>
-					<li>
-						<AppNavLink to='/'>
-							<HomeIcon />
-						</AppNavLink>
-					</li>
-					<li>
-						<AppNavLink to='/discover'>
-							<DiscoverIcon />
-						</AppNavLink>
-					</li>
+					<AppNavLink to='/'>
+						<HomeIcon />
+					</AppNavLink>
+
+					<AppNavLink to='/discover'>
+						<DiscoverIcon />
+					</AppNavLink>
 					{data.isLoggedIn ? (
-						<li>
-							<AppNavLink to='/app/recipes'>
-								<RecipeBookIcon />
-							</AppNavLink>
-						</li>
-					) : null}
-					<li>
-						<AppNavLink to='/settings'>
-							<SettingsIcon />
+						<AppNavLink to='/app/recipes'>
+							<RecipeBookIcon />
 						</AppNavLink>
-					</li>
+					) : null}
+					<AppNavLink to='/settings'>
+						<SettingsIcon />
+					</AppNavLink>
 				</ul>
 				<ul>
 					{data.isLoggedIn ? (
