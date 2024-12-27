@@ -51,6 +51,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
 	const user = await requiredLoggedInUser(request);
 	const formData = await request.formData();
 
+	//I can change the _action to intent here
 	switch (formData.get('_action')) {
 		case 'createShelf': {
 			return createShelf(user.id);
