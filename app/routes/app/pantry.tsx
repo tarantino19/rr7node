@@ -17,6 +17,7 @@ import { validateForm } from '~/utils/validation';
 import { createShelfItems, deleteShelfItem, getShelfItem } from '~/models/pantry-item.server';
 import { requiredLoggedInUser } from '~/utils/auth.server';
 import React, { useEffect, useRef } from 'react';
+import { error } from 'console';
 
 //zod validations
 const saveShelfNameSchema = z.object({
@@ -47,6 +48,14 @@ export const loader = async ({ request }: Route.LoaderArgs) => {
 };
 
 //actions for form
+
+const LoadingSpinner = () => {
+	return (
+		<div className='flex items-center justify-center h-full'>
+			<div className='w-16 h-16 border-4 border-t-transparent border-blue-500 rounded-full animate-spin'></div>
+		</div>
+	);
+};
 export const action = async ({ request }: Route.ActionArgs) => {
 	const user = await requiredLoggedInUser(request);
 	const formData = await request.formData();
@@ -120,6 +129,14 @@ export default function Pantry({ loaderData }: Route.ComponentProps) {
 	const { shelves } = loaderData;
 	const createShelfFetcher = useFetcher();
 	const isCreatingShelf = createShelfFetcher.formData?.get('_action') === 'createShelf';
+
+	// const navigation = useNavigation();
+
+	// const isNavigating = Boolean(navigation.location);
+
+	// if (isNavigating) {
+	// 	return <LoadingSpinner />;
+	// }
 
 	return (
 		<>
